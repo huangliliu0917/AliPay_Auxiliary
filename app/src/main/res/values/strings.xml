@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">蚂蚁辅助</string>
+    <string name="action_settings">Settings</string>
+    <string name="description">一键式获取支付宝付款码</string>
+</resources>
