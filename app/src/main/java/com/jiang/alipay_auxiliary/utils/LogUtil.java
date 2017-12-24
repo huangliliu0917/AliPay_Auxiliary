@@ -11,6 +11,7 @@ import android.util.Log;
  * Phone：18661201018
  * Purpose: LOG日志
  */
+
 public class LogUtil {
     static String className;
     static String methodName;
