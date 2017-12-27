@@ -94,26 +94,31 @@ public class MyAccessibilityService extends AccessibilityService {
 
                 //进入支付宝主页面
                 if ("com.eg.android.AlipayGphone.AlipayLogin".equals(classname)) {
-                    //收钱
                     Click("收钱");
                 }
 
                 //进入支付宝收钱页面
                 if ("com.alipay.mobile.payee.ui.PayeeQRActivity".equals(classname)) {
-
-                    //设置金额
                     Click("设置金额");
                 }
 
-                //进入支付宝收钱设置金额页面
+                //进入支付宝收钱页面
                 if ("com.alipay.mobile.payee.ui.PayeeQRSetMoneyActivity".equals(classname)) {
-                    Click("添加收款理由");
+                    Input("com.alipay.mobile.ui:id/content","100");
                 }
-//
-//                //进入支付宝收钱页面
-//                if ("com.alipay.mobile.payee.ui.PayeeQRSetMoneyActivity".equals(classname)) {
-//                    Input("金额","100");
-//                }
+
+                //进入支付宝收钱页面
+                if ("com.alipay.mobile.payee.ui.PayeeQRSetMoneyActivity".equals(classname)) {
+                    Click("确定");
+                }
+
+//                com.alipay.mobile.payee:id/payee_QRCodeImageView  二维码
+
+                //进入支付宝收钱页面
+                if ("com.alipay.mobile.payee.ui.PayeeQRActivity".equals(classname)) {
+                    Click("设置金额");
+                }
+
 
                 break;
 
