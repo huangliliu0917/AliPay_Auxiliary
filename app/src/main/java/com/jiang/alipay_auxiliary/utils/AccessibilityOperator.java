@@ -4,6 +4,7 @@ import android.accessibilityservice.AccessibilityService;
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.content.Context;
+import android.os.Bundle;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
@@ -90,77 +91,85 @@ public class AccessibilityOperator {
         return null;
     }
 
-    public boolean clickByText(String text) {
-        return performClick(findNodesByText(text));
-    }
-
     /**
-     * 根据View的ID搜索符合条件的节点,精确搜索方式;
-     * 这个只适用于自己写的界面，因为ID可能重复
-     * api要求18及以上
+     * 根据 View ID 点击
      *
      * @param viewId
-     * @return 是否点击成功
+     * @return
      */
     public boolean clickById(String viewId) {
         return performClick(findNodesById(viewId));
     }
 
+    /**
+     * 根据View 的文字点击
+     *
+     * @param text
+     * @return
+     */
+    public boolean clickByText(String text) {
+        return performClick(findNodesByText(text));
+    }
+
 
     /**
-     * 根据View的ID搜索符合条件的节点,精确搜索方式;
-     * 这个只适用于自己写的界面，因为ID可能重复
-     * api要求18及以上
+     * 根据View 的文字做长点击
+     *
+     * @param text
+     * @return
+     */
+    public boolean LongclickByText(String text) {
+        return performLongClick(findNodesByText(text));
+    }
+
+    /**
+     * 根据 View ID 输入
      *
      * @param viewId
-     * @return 是否点击成功
+     * @return
      */
-    /**
-     * 根据View的ID搜索符合条件的节点，精确搜索方式；
-     *
-     * @param viewId  View ID
-     * @param content 辅助内容
-     */
-    public void InputById(String viewId, String content) {
-        performInput(findNodesById(viewId), content);
+    public boolean InputById(String viewId, String text) {
+        return performInput(findNodesById(viewId), text);
     }
 
     /**
      * 点击
      *
      * @param nodeInfos
-     * @return
+     * @retur
      */
     private boolean performClick(List<AccessibilityNodeInfo> nodeInfos) {
         if (nodeInfos != null && !nodeInfos.isEmpty()) {
             AccessibilityNodeInfo node;
             for (int i = 0; i < nodeInfos.size(); i++) {
                 node = nodeInfos.get(i);
-                // 获得点击View的类型
-                LogUtil.e(TAG, "View类型：" + node.getClassName());
                 // 进行模拟点击
                 if (node.isEnabled()) {
+                    LogUtil.e(TAG, "View类型：" + node.getClassName());
                     //点击本视图
                     boolean b0 = node.performAction(AccessibilityNodeInfo.ACTION_CLICK);
                     if (b0) {
                         return true;
                     }
-
+                    LogUtil.e(TAG, "View类型：" + node.getParent().getClassName());
                     //点击父视图
                     boolean b1 = node.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
                     if (b1) {
+
                         return true;
                     }
-
+                    LogUtil.e(TAG, "View类型：" + node.getParent().getParent().getClassName());
                     //点击祖视图
                     boolean b2 = node.getParent().getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
                     if (b2) {
+
                         return true;
                     }
-
+                    LogUtil.e(TAG, "View类型：" + node.getParent().getParent().getParent().getClassName());
                     //点击外视图
                     boolean b3 = node.getParent().getParent().getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
                     if (b3) {
+
                         return true;
                     }
                 }
@@ -170,22 +179,75 @@ public class AccessibilityOperator {
     }
 
     /**
-     * 赋值
+     * 长点击
      *
      * @param nodeInfos
-     * @param content   内容
      * @return
      */
-    private void performInput(List<AccessibilityNodeInfo> nodeInfos, String content) {
+    private boolean performLongClick(List<AccessibilityNodeInfo> nodeInfos) {
         if (nodeInfos != null && !nodeInfos.isEmpty()) {
             AccessibilityNodeInfo node;
             for (int i = 0; i < nodeInfos.size(); i++) {
                 node = nodeInfos.get(i);
-                // 获得点击View的类型
-                LogUtil.e(TAG, "View类型：" + node.getClassName());
-                node.setText(content);
+                // 进行模拟点击
+                if (node.isEnabled()) {
+                    LogUtil.e(TAG, "View类型：" + node.getClassName());
+                    //点击本视图
+                    boolean b0 = node.performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK);
+                    if (b0) {
+                        return true;
+                    }
+                    LogUtil.e(TAG, "View类型：" + node.getParent().getClassName());
+                    //点击父视图
+                    boolean b1 = node.getParent().performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK);
+                    if (b1) {
+
+                        return true;
+                    }
+                    LogUtil.e(TAG, "View类型：" + node.getParent().getParent().getClassName());
+                    //点击祖视图
+                    boolean b2 = node.getParent().getParent().performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK);
+                    if (b2) {
+
+                        return true;
+                    }
+                    LogUtil.e(TAG, "View类型：" + node.getParent().getParent().getParent().getClassName());
+                    //点击外视图
+                    boolean b3 = node.getParent().getParent().getParent().performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK);
+                    if (b3) {
+
+                        return true;
+                    }
+                }
             }
         }
+        return false;
+    }
+
+
+    /**
+     * 输入
+     *
+     * @param nodeInfos
+     * @return
+     */
+    private boolean performInput(List<AccessibilityNodeInfo> nodeInfos, String text) {
+        if (nodeInfos != null && !nodeInfos.isEmpty()) {
+            AccessibilityNodeInfo node;
+            for (int i = 0; i < nodeInfos.size(); i++) {
+                node = nodeInfos.get(i);
+
+                LogUtil.e(TAG, "View类型：" + node.getClassName());
+
+                if (node.getClassName().toString().contains("EditText")) {
+                    Bundle bundle = new Bundle();
+                    bundle.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, text);
+                    node.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, bundle);
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 

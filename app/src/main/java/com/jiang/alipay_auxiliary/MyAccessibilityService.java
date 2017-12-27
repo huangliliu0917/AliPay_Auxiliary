@@ -1,12 +1,16 @@
 package com.jiang.alipay_auxiliary;
 
 import android.accessibilityservice.AccessibilityService;
+import android.app.ActivityManager;
+import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 
 import com.jiang.alipay_auxiliary.utils.AccessibilityOperator;
 import com.jiang.alipay_auxiliary.utils.LogUtil;
+
+import java.util.List;
 
 /**
  * @author: jiangyao
@@ -20,6 +24,33 @@ public class MyAccessibilityService extends AccessibilityService {
     private static final String TAG = "MyAccessibilityService";
 
     /**
+     * 查询前台应用的包名
+     *
+     * @param context
+     * @return
+     */
+    public static String getTopAppPackageName(Context context) {
+
+        String packageName = "";
+        ActivityManager activityManager = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        try {
+            List<ActivityManager.RunningAppProcessInfo> processes = activityManager.getRunningAppProcesses();
+            if (processes.size() == 0) {
+                return packageName;
+            }
+            for (ActivityManager.RunningAppProcessInfo process : processes) {
+
+                if (process.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                    return process.processName;
+                }
+            }
+        } catch (Exception ignored) {
+            LogUtil.e(TAG, "没查到");
+        }
+        return packageName;
+    }
+
+    /**
      * 系统会在成功连接上你的服务的时候调用这个方法，
      * 在这个方法里你可以做一下初始化工作，
      * 例如设备的声音震动管理，
@@ -30,7 +61,15 @@ public class MyAccessibilityService extends AccessibilityService {
         super.onServiceConnected();
         LogUtil.e(TAG, "服务已开启");
 
+        //如果前台是支付宝
+        if (getTopAppPackageName(MyApplication.context).equals("com.eg.android.AlipayGphone")) {
+
+        } else {
+            startActivity(getPackageManager().getLaunchIntentForPackage("com.eg.android.AlipayGphone"));
+        }
+
     }
+
 
     /**
      * 通过这个函数可以接收系统发送来的AccessibilityEvent，
@@ -55,26 +94,26 @@ public class MyAccessibilityService extends AccessibilityService {
 
                 //进入支付宝主页面
                 if ("com.eg.android.AlipayGphone.AlipayLogin".equals(classname)) {
+                    //收钱
                     Click("收钱");
                 }
 
                 //进入支付宝收钱页面
                 if ("com.alipay.mobile.payee.ui.PayeeQRActivity".equals(classname)) {
 
+                    //设置金额
                     Click("设置金额");
                 }
 
                 //进入支付宝收钱设置金额页面
                 if ("com.alipay.mobile.payee.ui.PayeeQRSetMoneyActivity".equals(classname)) {
-
-                    AccessibilityOperator.getInstance().InputById("com.alipay.mobile.ui:id/content","100");
                     Click("添加收款理由");
-                    AccessibilityOperator.getInstance().InputById("com.alipay.mobile.ui:id/content","不需要理由");
-                    Click("确定");
-
-
                 }
-
+//
+//                //进入支付宝收钱页面
+//                if ("com.alipay.mobile.payee.ui.PayeeQRSetMoneyActivity".equals(classname)) {
+//                    Input("金额","100");
+//                }
 
                 break;
 
@@ -111,6 +150,32 @@ public class MyAccessibilityService extends AccessibilityService {
 
     }
 
+    /**
+     * 赋值
+     * @param click
+     * @param text
+     */
+    public void Input(String click,String text) {
+
+        //第一次尝试点击
+        boolean b1 = AccessibilityOperator.getInstance().InputById(click,text);
+        LogUtil.e(TAG, b1 ? "第一次成功" : "第一次失败");
+        if (b1) {
+            return;
+        }
+
+        //尝试第二次点击
+        boolean b2 = AccessibilityOperator.getInstance().InputById(click,text);
+        LogUtil.e(TAG, b2 ? "第二次成功" : "第二次失败");
+        if (b2) {
+            return;
+        }
+
+        //尝试第三次点击
+        boolean b3 = AccessibilityOperator.getInstance().InputById(click,text);
+        LogUtil.e(TAG, b3 ? "第三次成功" : "第三次失败");
+
+    }
 
     /**
      * 这个在系统想要中断AccessibilityService返给的响应时会调用。
