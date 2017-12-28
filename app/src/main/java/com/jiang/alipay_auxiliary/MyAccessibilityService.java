@@ -23,6 +23,11 @@ import java.util.List;
 public class MyAccessibilityService extends AccessibilityService {
     private static final String TAG = "MyAccessibilityService";
 
+    public static String money, message;
+
+    //流程记录
+    boolean 收钱, 设置金额, 添加收款理由, 金额输入, 理由输入, 输入完成, 返回收款页面, 获取二维码;
+
     /**
      * 查询前台应用的包名
      *
@@ -61,6 +66,9 @@ public class MyAccessibilityService extends AccessibilityService {
         super.onServiceConnected();
         LogUtil.e(TAG, "服务已开启");
 
+        LogUtil.e(TAG, "金额：" + money);
+        LogUtil.e(TAG, "理由：" + message);
+
         //如果前台是支付宝
         if (getTopAppPackageName(MyApplication.context).equals("com.eg.android.AlipayGphone")) {
 
@@ -69,7 +77,6 @@ public class MyAccessibilityService extends AccessibilityService {
         }
 
     }
-
 
     /**
      * 通过这个函数可以接收系统发送来的AccessibilityEvent，
@@ -93,31 +100,64 @@ public class MyAccessibilityService extends AccessibilityService {
                 LogUtil.e(TAG, "到: " + classname);
 
                 //进入支付宝主页面
-                if ("com.eg.android.AlipayGphone.AlipayLogin".equals(classname)) {
+                if ("com.eg.android.AlipayGphone.AlipayLogin".equals(classname) && !收钱) {
                     Click("收钱");
+                    收钱 = true;
                 }
 
                 //进入支付宝收钱页面
-                if ("com.alipay.mobile.payee.ui.PayeeQRActivity".equals(classname)) {
+                if ("com.alipay.mobile.payee.ui.PayeeQRActivity".equals(classname) && !设置金额) {
                     Click("设置金额");
+                    设置金额 = true;
                 }
 
-                //进入支付宝收钱页面
-                if ("com.alipay.mobile.payee.ui.PayeeQRSetMoneyActivity".equals(classname)) {
-                    Input("com.alipay.mobile.ui:id/content","100");
+                //进入支付宝设置金额页面
+                if ("com.alipay.mobile.payee.ui.PayeeQRSetMoneyActivity".equals(classname) && !添加收款理由) {
+                    Click("添加收款理由");
+                    添加收款理由 = true;
                 }
 
-                //进入支付宝收钱页面
-                if ("com.alipay.mobile.payee.ui.PayeeQRSetMoneyActivity".equals(classname)) {
+                //进入支付宝设置金额页面
+                if ("com.alipay.mobile.payee.ui.PayeeQRSetMoneyActivity".equals(classname) && !金额输入) {
+                    LogUtil.e(TAG, "金额：" + money);
+                    Input("com.alipay.mobile.ui:id/content", money);
+                    金额输入 = true;
+                }
+
+                //进入支付宝设置金额页面
+                if ("com.alipay.mobile.payee.ui.PayeeQRSetMoneyActivity".equals(classname) && !理由输入) {
+                    Input("com.alipay.mobile.ui:id/content", message);
+
+                    理由输入 = true;
+                }
+
+                //进入支付宝设置金额页面
+                if ("com.alipay.mobile.payee.ui.PayeeQRSetMoneyActivity".equals(classname) && !输入完成) {
                     Click("确定");
+                    输入完成 = true;
                 }
 
-//                com.alipay.mobile.payee:id/payee_QRCodeImageView  二维码
+                //进入支付宝设置金额页面
+                if ("com.alipay.mobile.payee.ui.PayeeQRSetMoneyActivity".equals(classname) && !返回收款页面) {
+                    AccessibilityOperator.getInstance().clickBackKey();
+                    返回收款页面 = true;
+                }
 
                 //进入支付宝收钱页面
-                if ("com.alipay.mobile.payee.ui.PayeeQRActivity".equals(classname)) {
-                    Click("设置金额");
+                if ("com.alipay.mobile.payee.ui.PayeeQRActivity".equals(classname) && !获取二维码) {
+
+                    获取二维码 = true;
+                    LogUtil.e(TAG, "获取到二维码");
                 }
+
+
+//
+////                com.alipay.mobile.payee:id/payee_QRCodeImageView  二维码
+//
+//                //进入支付宝收钱页面
+//                if ("com.alipay.mobile.payee.ui.PayeeQRActivity".equals(classname)) {
+//                    Click("设置金额");
+//                }
 
 
                 break;
@@ -133,52 +173,31 @@ public class MyAccessibilityService extends AccessibilityService {
      *
      * @param click
      */
-    public void Click(String click) {
+    public boolean Click(String click) {
 
-        //第一次尝试点击
-        boolean b1 = AccessibilityOperator.getInstance().clickByText(click);
-        LogUtil.e(TAG, b1 ? "第一次成功" : "第一次失败");
-        if (b1) {
-            return;
+        if (AccessibilityOperator.getInstance().clickByText(click)) {
+            LogUtil.e(TAG, "点击" + click + "成功");
+            return true;
         }
-
-        //尝试第二次点击
-        boolean b2 = AccessibilityOperator.getInstance().clickByText(click);
-        LogUtil.e(TAG, b2 ? "第二次成功" : "第二次失败");
-        if (b2) {
-            return;
-        }
-
-        //尝试第三次点击
-        boolean b3 = AccessibilityOperator.getInstance().clickByText(click);
-        LogUtil.e(TAG, b3 ? "第三次成功" : "第三次失败");
+        LogUtil.e(TAG, "点击 " + click + " 失败");
+        return false;
 
     }
 
     /**
      * 赋值
+     *
      * @param click
      * @param text
      */
-    public void Input(String click,String text) {
+    public boolean Input(String click, String text) {
 
-        //第一次尝试点击
-        boolean b1 = AccessibilityOperator.getInstance().InputById(click,text);
-        LogUtil.e(TAG, b1 ? "第一次成功" : "第一次失败");
-        if (b1) {
-            return;
+        if (AccessibilityOperator.getInstance().InputById(click, text)) {
+            LogUtil.e(TAG, "输入 " + text + " 成功");
+            return true;
         }
-
-        //尝试第二次点击
-        boolean b2 = AccessibilityOperator.getInstance().InputById(click,text);
-        LogUtil.e(TAG, b2 ? "第二次成功" : "第二次失败");
-        if (b2) {
-            return;
-        }
-
-        //尝试第三次点击
-        boolean b3 = AccessibilityOperator.getInstance().InputById(click,text);
-        LogUtil.e(TAG, b3 ? "第三次成功" : "第三次失败");
+        LogUtil.e(TAG, "输入 " + text + " 失败");
+        return false;
 
     }
 

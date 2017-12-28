@@ -14,7 +14,8 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:hint="金额"
-        android:inputType="numberDecimal"
+        android:inputType="number"
+        android:maxLength="2"
         tools:ignore="MissingConstraints" />
 
     <EditText

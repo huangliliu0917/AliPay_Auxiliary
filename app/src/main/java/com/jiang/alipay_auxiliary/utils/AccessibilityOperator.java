@@ -59,7 +59,7 @@ public class AccessibilityOperator {
         // 建议使用getRootInActiveWindow，这样不依赖当前的事件类型
         if (mAccessibilityService != null) {
             nodeInfo = mAccessibilityService.getRootInActiveWindow();
-            LogUtil.e(TAG, "nodeInfo: " + nodeInfo);
+//            LogUtil.e(TAG, "nodeInfo: " + nodeInfo);
         }
 
         return nodeInfo;
@@ -224,9 +224,9 @@ public class AccessibilityOperator {
         return false;
     }
 
-
     /**
      * 输入
+     * 针对支付宝定制话
      *
      * @param nodeInfos
      * @return
@@ -234,18 +234,41 @@ public class AccessibilityOperator {
     private boolean performInput(List<AccessibilityNodeInfo> nodeInfos, String text) {
         if (nodeInfos != null && !nodeInfos.isEmpty()) {
             AccessibilityNodeInfo node;
-            for (int i = 0; i < nodeInfos.size(); i++) {
-                node = nodeInfos.get(i);
 
-                LogUtil.e(TAG, "View类型：" + node.getClassName());
+            LogUtil.e(TAG, "搜索到:" + nodeInfos.size() + "个");
 
-                if (node.getClassName().toString().contains("EditText")) {
+            //支付金额输入有两个输入框
+            //上面一个为收款金额
+            //下一个为收款理由
+            if (nodeInfos.size() == 2) {
+                try {
+                    int i = Integer.valueOf(text);
+                    node = nodeInfos.get(0);
+                    Bundle bundle = new Bundle();
+                    bundle.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, text);
+                    node.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, bundle);
+                    return true;
+                } catch (Exception e) {
+                    node = nodeInfos.get(1);
                     Bundle bundle = new Bundle();
                     bundle.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, text);
                     node.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, bundle);
                     return true;
                 }
             }
+
+//            for (int i = 0; i < nodeInfos.size(); i++) {
+//                node = nodeInfos.get(i);
+//
+//                LogUtil.e(TAG, "View类型：" + node.getClassName());
+//
+//                if (node.getClassName().toString().contains("EditText")) {
+//                    Bundle bundle = new Bundle();
+//                    bundle.putCharSequence(AccessibilityNodeInfo.ACTION_ARGUMENT_SET_TEXT_CHARSEQUENCE, text);
+//                    node.performAction(AccessibilityNodeInfo.ACTION_SET_TEXT, bundle);
+//                    return true;
+//                }
+//            }
         }
         return false;
     }
