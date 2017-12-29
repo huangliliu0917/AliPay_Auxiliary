@@ -146,8 +146,15 @@ public class MyAccessibilityService extends AccessibilityService {
                 //进入支付宝收钱页面
                 if ("com.alipay.mobile.payee.ui.PayeeQRActivity".equals(classname) && !获取二维码) {
 
+                    //截屏操作
+
+                    //使用Zxing 识别
+
+                    //上送二维码
+
                     获取二维码 = true;
                     LogUtil.e(TAG, "获取到二维码");
+
                 }
 
 
@@ -221,6 +228,16 @@ public class MyAccessibilityService extends AccessibilityService {
     public boolean onUnbind(Intent intent) {
         LogUtil.e(TAG, "onUnbind: ");
         return super.onUnbind(intent);
+    }
+
+
+    /**
+     * 获取支付宝付款二维码
+     * @param money
+     * @param message
+     */
+    public void AliPayQRcode(String money,String message){
+
     }
 
 }
