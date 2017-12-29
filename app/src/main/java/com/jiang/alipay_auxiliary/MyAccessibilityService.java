@@ -120,13 +120,13 @@ public class MyAccessibilityService extends AccessibilityService {
                 //进入支付宝设置金额页面
                 if ("com.alipay.mobile.payee.ui.PayeeQRSetMoneyActivity".equals(classname) && !金额输入) {
                     LogUtil.e(TAG, "金额：" + money);
-                    Input("com.alipay.mobile.ui:id/content", money);
+                    Input("com.alipay.mobile.ui:id/content", "10");
                     金额输入 = true;
                 }
 
                 //进入支付宝设置金额页面
                 if ("com.alipay.mobile.payee.ui.PayeeQRSetMoneyActivity".equals(classname) && !理由输入) {
-                    Input("com.alipay.mobile.ui:id/content", message);
+                    Input("com.alipay.mobile.ui:id/content", "没有理由");
 
                     理由输入 = true;
                 }

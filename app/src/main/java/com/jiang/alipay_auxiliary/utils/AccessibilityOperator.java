@@ -5,6 +5,8 @@ import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.os.Bundle;
+import android.view.View;
+import android.view.Window;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
@@ -99,6 +101,16 @@ public class AccessibilityOperator {
      */
     public boolean clickById(String viewId) {
         return performClick(findNodesById(viewId));
+    }
+
+    /**
+     * 根据 View ID 获取二维码
+     *
+     * @param viewId
+     * @return
+     */
+    public void QRcodeById(String viewId) {
+        performQRCode(findNodesById(viewId));
     }
 
     /**
@@ -269,6 +281,26 @@ public class AccessibilityOperator {
 //                    return true;
 //                }
 //            }
+        }
+        return false;
+    }
+
+    /**
+     * 获取二维码
+     * 针对支付宝定制话
+     *
+     * @param nodeInfos
+     * @return
+     */
+    private boolean performQRCode(List<AccessibilityNodeInfo> nodeInfos) {
+        if (nodeInfos != null && !nodeInfos.isEmpty()) {
+            AccessibilityNodeInfo node;
+
+            for (int i = 0; i < nodeInfos.size(); i++) {
+                node = nodeInfos.get(i);
+                LogUtil.e(TAG, "View类型：" + node.getClassName());
+
+            }
         }
         return false;
     }
