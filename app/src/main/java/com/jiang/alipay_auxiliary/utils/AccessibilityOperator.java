@@ -5,8 +5,6 @@ import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.os.Bundle;
-import android.view.View;
-import android.view.Window;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityNodeInfo;
 
@@ -125,13 +123,23 @@ public class AccessibilityOperator {
 
 
     /**
-     * 根据View 的文字做长点击
+     * 根据View 的文字做长按
      *
      * @param text
      * @return
      */
     public boolean LongclickByText(String text) {
         return performLongClick(findNodesByText(text));
+    }
+
+    /**
+     * 根据View 的ID做长按
+     *
+     * @param Id
+     * @return
+     */
+    public boolean LongclickById(String Id) {
+        return performLongClick(findNodesById(Id));
     }
 
     /**
@@ -155,36 +163,45 @@ public class AccessibilityOperator {
             AccessibilityNodeInfo node;
             for (int i = 0; i < nodeInfos.size(); i++) {
                 node = nodeInfos.get(i);
-                // 进行模拟点击
-                if (node.isEnabled()) {
+                //逐层判断
+
+                //传入层
+                if (node != null && node.isEnabled()) {
                     LogUtil.e(TAG, "View类型：" + node.getClassName());
-                    //点击本视图
-                    boolean b0 = node.performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                    if (b0) {
-                        return true;
-                    }
-                    LogUtil.e(TAG, "View类型：" + node.getParent().getClassName());
-                    //点击父视图
-                    boolean b1 = node.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                    if (b1) {
-
-                        return true;
-                    }
-                    LogUtil.e(TAG, "View类型：" + node.getParent().getParent().getClassName());
-                    //点击祖视图
-                    boolean b2 = node.getParent().getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                    if (b2) {
-
-                        return true;
-                    }
-                    LogUtil.e(TAG, "View类型：" + node.getParent().getParent().getParent().getClassName());
-                    //点击外视图
-                    boolean b3 = node.getParent().getParent().getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK);
-                    if (b3) {
-
+                    if (node.performAction(AccessibilityNodeInfo.ACTION_CLICK)) {
+                        LogUtil.e(TAG, "点击： " + node.getClassName() + " 成功");
                         return true;
                     }
                 }
+
+                //上一层
+                if (node.getParent() != null && node.getParent().isEnabled()) {
+                    LogUtil.e(TAG, "View类型：" + node.getParent().getClassName());
+                    if (node.performAction(AccessibilityNodeInfo.ACTION_CLICK)) {
+                        LogUtil.e(TAG, "点击： " + node.getParent().getClassName() + " 成功");
+                        return true;
+                    }
+                }
+
+                //上上一层
+                if (node.getParent().getParent() != null && node.getParent().getParent().isEnabled()) {
+                    LogUtil.e(TAG, "View类型：" + node.getParent().getParent().getClassName());
+                    if (node.performAction(AccessibilityNodeInfo.ACTION_CLICK)) {
+                        LogUtil.e(TAG, "点击： " + node.getParent().getParent().getClassName() + " 成功");
+                        return true;
+                    }
+                }
+
+                //表层
+                if (node.getParent().getParent().getParent() != null && node.getParent().getParent().getParent().isEnabled()) {
+                    LogUtil.e(TAG, "View类型：" + node.getParent().getParent().getParent().getClassName());
+                    if (node.performAction(AccessibilityNodeInfo.ACTION_CLICK)) {
+                        LogUtil.e(TAG, "点击： " + node.getParent().getParent().getParent().getClassName() + " 成功");
+                        return true;
+                    }
+                }
+
+
             }
         }
         return false;
@@ -201,33 +218,38 @@ public class AccessibilityOperator {
             AccessibilityNodeInfo node;
             for (int i = 0; i < nodeInfos.size(); i++) {
                 node = nodeInfos.get(i);
-                // 进行模拟点击
-                if (node.isEnabled()) {
+                //传入层
+                if (node != null && node.isEnabled()) {
                     LogUtil.e(TAG, "View类型：" + node.getClassName());
-                    //点击本视图
-                    boolean b0 = node.performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK);
-                    if (b0) {
+                    if (node.performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK)) {
+                        LogUtil.e(TAG, "长按： " + node.getClassName() + " 成功");
                         return true;
                     }
+                }
+
+                //上一层
+                if (node.getParent() != null && node.getParent().isEnabled()) {
                     LogUtil.e(TAG, "View类型：" + node.getParent().getClassName());
-                    //点击父视图
-                    boolean b1 = node.getParent().performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK);
-                    if (b1) {
-
+                    if (node.performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK)) {
+                        LogUtil.e(TAG, "长按： " + node.getParent().getClassName() + " 成功");
                         return true;
                     }
+                }
+
+                //上上一层
+                if (node.getParent().getParent() != null && node.getParent().getParent().isEnabled()) {
                     LogUtil.e(TAG, "View类型：" + node.getParent().getParent().getClassName());
-                    //点击祖视图
-                    boolean b2 = node.getParent().getParent().performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK);
-                    if (b2) {
-
+                    if (node.performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK)) {
+                        LogUtil.e(TAG, "长按： " + node.getParent().getParent().getClassName() + " 成功");
                         return true;
                     }
-                    LogUtil.e(TAG, "View类型：" + node.getParent().getParent().getParent().getClassName());
-                    //点击外视图
-                    boolean b3 = node.getParent().getParent().getParent().performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK);
-                    if (b3) {
+                }
 
+                //表层
+                if (node.getParent().getParent().getParent() != null && node.getParent().getParent().getParent().isEnabled()) {
+                    LogUtil.e(TAG, "View类型：" + node.getParent().getParent().getParent().getClassName());
+                    if (node.performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK)) {
+                        LogUtil.e(TAG, "长按： " + node.getParent().getParent().getParent().getClassName() + " 成功");
                         return true;
                     }
                 }

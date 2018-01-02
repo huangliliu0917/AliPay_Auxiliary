@@ -9,7 +9,6 @@ import android.os.Environment;
 import android.util.Log;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
-import android.widget.Toast;
 
 import com.jiang.alipay_auxiliary.utils.AccessibilityOperator;
 import com.jiang.alipay_auxiliary.utils.LogUtil;
@@ -75,19 +74,20 @@ public class MyAccessibilityService extends AccessibilityService {
         LogUtil.e(TAG, "金额：" + money);
         LogUtil.e(TAG, "理由：" + message);
 
-//        //如果前台是支付宝
-//        if (getTopAppPackageName(MyApplication.context).equals("com.eg.android.AlipayGphone")) {
-//
-//        } else {
-//            startActivity(getPackageManager().getLaunchIntentForPackage("com.eg.android.AlipayGphone"));
-//        }
-
         //如果前台是支付宝
-        if (getTopAppPackageName(MyApplication.context).equals("com.tencent.mm")) {
+        if (getTopAppPackageName(MyApplication.context).equals("com.eg.android.AlipayGphone")) {
 
         } else {
-            startActivity(getPackageManager().getLaunchIntentForPackage("com.tencent.mm"));
+            startActivity(getPackageManager().getLaunchIntentForPackage("com.eg.android.AlipayGphone"));
         }
+
+
+//        //如果前台是支付宝
+//        if (getTopAppPackageName(MyApplication.context).equals("com.tencent.mm")) {
+//
+//        } else {
+//            startActivity(getPackageManager().getLaunchIntentForPackage("com.tencent.mm"));
+//        }
 
     }
 
@@ -111,9 +111,6 @@ public class MyAccessibilityService extends AccessibilityService {
                 break;
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
                 LogUtil.e(TAG, "到: " + classname);
-
-
-
 
                 //进入微信主页面
                 if ("com.tencent.mm.ui.LauncherUI".equals(classname) && !收钱) {
@@ -170,14 +167,23 @@ public class MyAccessibilityService extends AccessibilityService {
                 }
 
                 //进入支付宝收钱页面
-                if ("com.alipay.mobile.payee.ui.PayeeQRActivity".equals(classname) && !获取二维码) {
+                if ("com.alipay.mobile.payee.ui.PayeeQRActivity".equals(classname) && !获取二维码 && 金额输入) {
+
+                    //长按操作
+                    LongClick("支付宝扫一扫，向我付钱");
+
+                    //保存操作
+                    Click("保存图片到相册");
+
+
+                    //读取、识别操作
 
                     //截屏操作
 
                     //使用Zxing 识别
 
                     //上送二维码
-                    GetQRcode();
+//                    GetQRcode();
 
                     获取二维码 = true;
                     LogUtil.e(TAG, "获取到二维码");
@@ -210,6 +216,23 @@ public class MyAccessibilityService extends AccessibilityService {
     public boolean Click(String click) {
 
         if (AccessibilityOperator.getInstance().clickByText(click)) {
+            LogUtil.e(TAG, "点击" + click + "成功");
+            return true;
+        }
+        LogUtil.e(TAG, "点击 " + click + " 失败");
+        return false;
+
+    }
+
+
+    /**
+     * 长按
+     *
+     * @param click
+     */
+    public boolean LongClick(String click) {
+
+        if (AccessibilityOperator.getInstance().LongclickByText(click)) {
             LogUtil.e(TAG, "点击" + click + "成功");
             return true;
         }
@@ -260,15 +283,16 @@ public class MyAccessibilityService extends AccessibilityService {
 
     /**
      * 获取支付宝付款二维码
+     *
      * @param money
      * @param message
      */
-    public void AliPayQRcode(String money,String message){
+    public void AliPayQRcode(String money, String message) {
 
     }
 
 
-    public void GetQRcode(){
+    public void GetQRcode() {
         View dView = MyApplication.activity.getWindow().getDecorView();
 
         dView.setDrawingCacheEnabled(true);
@@ -285,9 +309,9 @@ public class MyAccessibilityService extends AccessibilityService {
                 bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
                 os.flush();
                 os.close();
-                LogUtil.e(TAG,"存储完成");
+                LogUtil.e(TAG, "存储完成");
             } catch (Exception e) {
-                LogUtil.e(TAG,"存储失败");
+                LogUtil.e(TAG, "存储失败");
             }
         }
     }
