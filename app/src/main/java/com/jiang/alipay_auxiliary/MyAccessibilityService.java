@@ -4,12 +4,18 @@ import android.accessibilityservice.AccessibilityService;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.os.Environment;
 import android.util.Log;
+import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
+import android.widget.Toast;
 
 import com.jiang.alipay_auxiliary.utils.AccessibilityOperator;
 import com.jiang.alipay_auxiliary.utils.LogUtil;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.util.List;
 
 /**
@@ -69,11 +75,18 @@ public class MyAccessibilityService extends AccessibilityService {
         LogUtil.e(TAG, "金额：" + money);
         LogUtil.e(TAG, "理由：" + message);
 
+//        //如果前台是支付宝
+//        if (getTopAppPackageName(MyApplication.context).equals("com.eg.android.AlipayGphone")) {
+//
+//        } else {
+//            startActivity(getPackageManager().getLaunchIntentForPackage("com.eg.android.AlipayGphone"));
+//        }
+
         //如果前台是支付宝
-        if (getTopAppPackageName(MyApplication.context).equals("com.eg.android.AlipayGphone")) {
+        if (getTopAppPackageName(MyApplication.context).equals("com.tencent.mm")) {
 
         } else {
-            startActivity(getPackageManager().getLaunchIntentForPackage("com.eg.android.AlipayGphone"));
+            startActivity(getPackageManager().getLaunchIntentForPackage("com.tencent.mm"));
         }
 
     }
@@ -98,6 +111,19 @@ public class MyAccessibilityService extends AccessibilityService {
                 break;
             case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
                 LogUtil.e(TAG, "到: " + classname);
+
+
+
+
+                //进入微信主页面
+                if ("com.tencent.mm.ui.LauncherUI".equals(classname) && !收钱) {
+                    Click("我");
+                }
+
+                //进入微信我的钱包页面
+                if ("com.tencent.mm.plugin.mall.ui.MallIndexUI".equals(classname) && !收钱) {
+                    Click("收付款");
+                }
 
                 //进入支付宝主页面
                 if ("com.eg.android.AlipayGphone.AlipayLogin".equals(classname) && !收钱) {
@@ -151,6 +177,7 @@ public class MyAccessibilityService extends AccessibilityService {
                     //使用Zxing 识别
 
                     //上送二维码
+                    GetQRcode();
 
                     获取二维码 = true;
                     LogUtil.e(TAG, "获取到二维码");
@@ -238,6 +265,31 @@ public class MyAccessibilityService extends AccessibilityService {
      */
     public void AliPayQRcode(String money,String message){
 
+    }
+
+
+    public void GetQRcode(){
+        View dView = MyApplication.activity.getWindow().getDecorView();
+
+        dView.setDrawingCacheEnabled(true);
+        dView.buildDrawingCache();
+        Bitmap bitmap = Bitmap.createBitmap(dView.getDrawingCache());
+        if (bitmap != null) {
+            try {
+                // 获取内置SD卡路径
+                String sdCardPath = Environment.getExternalStorageDirectory().getPath();
+                // 图片文件路径
+                String filePath = sdCardPath + File.separator + "screenshot.png";
+                File file = new File(filePath);
+                FileOutputStream os = new FileOutputStream(file);
+                bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
+                os.flush();
+                os.close();
+                LogUtil.e(TAG,"存储完成");
+            } catch (Exception e) {
+                LogUtil.e(TAG,"存储失败");
+            }
+        }
     }
 
 }

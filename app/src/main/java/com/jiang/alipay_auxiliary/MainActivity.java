@@ -42,15 +42,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(final View view) {
 
-                if (TextUtils.isEmpty(money.getText().toString())) {
-                    Snackbar.make(view, "金额不能为空！", Snackbar.LENGTH_SHORT).show();
-                    return;
-                }
-
-                if (TextUtils.isEmpty(message.getText().toString())) {
-                    Snackbar.make(view, "不能没有理由！", Snackbar.LENGTH_SHORT).show();
-                    return;
-                }
+//                if (TextUtils.isEmpty(money.getText().toString())) {
+//                    Snackbar.make(view, "金额不能为空！", Snackbar.LENGTH_SHORT).show();
+//                    return;
+//                }
+//
+//                if (TextUtils.isEmpty(message.getText().toString())) {
+//                    Snackbar.make(view, "不能没有理由！", Snackbar.LENGTH_SHORT).show();
+//                    return;
+//                }
 
                 MyAccessibilityService.money = money.getText().toString();
                 MyAccessibilityService.message = message.getText().toString();

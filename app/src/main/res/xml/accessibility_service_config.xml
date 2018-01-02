@@ -6,4 +6,4 @@
     android:canRetrieveWindowContent="true"
     android:description="@string/description"
     android:notificationTimeout="100"
-    android:packageNames="com.eg.android.AlipayGphone,com.anda.mengdou" />
+    android:packageNames="com.eg.android.AlipayGphone,com.tencent.mm" />
