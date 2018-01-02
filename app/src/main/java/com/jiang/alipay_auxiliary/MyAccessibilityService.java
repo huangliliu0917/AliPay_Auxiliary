@@ -4,11 +4,9 @@ import android.accessibilityservice.AccessibilityService;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.util.Log;
-import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
 
 import com.jiang.alipay_auxiliary.utils.AccessibilityOperator;
@@ -16,7 +14,6 @@ import com.jiang.alipay_auxiliary.utils.LogUtil;
 import com.jiang.alipay_auxiliary.utils.QRCodeUtils;
 
 import java.io.File;
-import java.io.FileOutputStream;
 import java.util.List;
 import java.util.Vector;
 
@@ -38,11 +35,8 @@ public class MyAccessibilityService extends AccessibilityService {
 
     //流程记录
     boolean 收钱, 设置金额, 添加收款理由, 金额输入, 理由输入, 输入完成, 返回收款页面, 获取二维码;
-    private boolean 我;
-    private boolean 钱包;
-    private boolean 收付款;
-    private boolean 二维码收款;
-    private boolean 保存收款码;
+
+    private boolean 我, 钱包, 收付款, 二维码收款, 设金额, 输入金额, 添加备注, 输入备注, 返回二维码收款, 保存收款码, 识别收款码;
 
     /**
      * 查询前台应用的包名
@@ -126,33 +120,47 @@ public class MyAccessibilityService extends AccessibilityService {
                 //进入微信主页面
                 if ("com.tencent.mm.ui.LauncherUI".equals(classname) && !我) {
                     Click("我");
-                    我=true;
+                    我 = true;
                 }
 
                 //进入钱包主页面
                 if ("com.tencent.mm.ui.LauncherUI".equals(classname) && !钱包) {
                     Click("钱包");
-                    钱包=true;
+                    钱包 = true;
                 }
 
                 //进入微信收付款页面
                 if ("com.tencent.mm.plugin.mall.ui.MallIndexUI".equals(classname) && !收付款) {
                     Click("收付款");
-                    收付款=true;
+                    收付款 = true;
                 }
 
                 //进入微信二维码收款页面
                 if ("com.tencent.mm.plugin.offline.ui.WalletOfflineCoinPurseUI".equals(classname) && !二维码收款) {
                     Click("二维码收款");
-                    二维码收款=true;
+                    二维码收款 = true;
                 }
+
+                //进入微信二维码收款页面
+                if ("com.tencent.mm.plugin.collect.ui.CollectMainUI".equals(classname) && !设金额) {
+                    Click("设置金额");
+                    设金额 = true;
+                }
+
+                //进入微信二维码收款页面
+                if ("com.tencent.mm.plugin.collect.ui.CollectCreateQRCodeUI".equals(classname) && !二维码收款) {
+
+
+//                    Click("确定");
+                    二维码收款 = true;
+                }
+
 
                 //点击"保存收款码"
                 if ("com.tencent.mm.plugin.collect.ui.CollectMainUI".equals(classname) && !保存收款码) {
                     Click("保存收款码");
-                    保存收款码=true;
+                    保存收款码 = true;
                 }
-
 
 
                 //进入支付宝主页面
@@ -363,33 +371,5 @@ public class MyAccessibilityService extends AccessibilityService {
         } else {
             return null;
         }
-
-
     }
-
-
-    public void GetQRcode() {
-        View dView = MyApplication.activity.getWindow().getDecorView();
-
-        dView.setDrawingCacheEnabled(true);
-        dView.buildDrawingCache();
-        Bitmap bitmap = Bitmap.createBitmap(dView.getDrawingCache());
-        if (bitmap != null) {
-            try {
-                // 获取内置SD卡路径
-                String sdCardPath = Environment.getExternalStorageDirectory().getPath();
-                // 图片文件路径
-                String filePath = sdCardPath + File.separator + "screenshot.png";
-                File file = new File(filePath);
-                FileOutputStream os = new FileOutputStream(file);
-                bitmap.compress(Bitmap.CompressFormat.PNG, 100, os);
-                os.flush();
-                os.close();
-                LogUtil.e(TAG, "存储完成");
-            } catch (Exception e) {
-                LogUtil.e(TAG, "存储失败");
-            }
-        }
-    }
-
 }
