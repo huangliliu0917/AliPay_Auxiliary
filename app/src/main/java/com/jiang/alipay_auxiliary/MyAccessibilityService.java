@@ -38,6 +38,11 @@ public class MyAccessibilityService extends AccessibilityService {
 
     //流程记录
     boolean 收钱, 设置金额, 添加收款理由, 金额输入, 理由输入, 输入完成, 返回收款页面, 获取二维码;
+    private boolean 我;
+    private boolean 钱包;
+    private boolean 收付款;
+    private boolean 二维码收款;
+    private boolean 保存收款码;
 
     /**
      * 查询前台应用的包名
@@ -80,20 +85,20 @@ public class MyAccessibilityService extends AccessibilityService {
         LogUtil.e(TAG, "金额：" + money);
         LogUtil.e(TAG, "理由：" + message);
 
-        //如果前台是支付宝
-        if (getTopAppPackageName(MyApplication.context).equals("com.eg.android.AlipayGphone")) {
-
-        } else {
-            startActivity(getPackageManager().getLaunchIntentForPackage("com.eg.android.AlipayGphone"));
-        }
-
-
 //        //如果前台是支付宝
-//        if (getTopAppPackageName(MyApplication.context).equals("com.tencent.mm")) {
+//        if (getTopAppPackageName(MyApplication.context).equals("com.eg.android.AlipayGphone")) {
 //
 //        } else {
-//            startActivity(getPackageManager().getLaunchIntentForPackage("com.tencent.mm"));
+//            startActivity(getPackageManager().getLaunchIntentForPackage("com.eg.android.AlipayGphone"));
 //        }
+
+
+        //如果前台是微信
+        if (getTopAppPackageName(MyApplication.context).equals("com.tencent.mm")) {
+
+        } else {
+            startActivity(getPackageManager().getLaunchIntentForPackage("com.tencent.mm"));
+        }
 
     }
 
@@ -119,14 +124,36 @@ public class MyAccessibilityService extends AccessibilityService {
                 LogUtil.e(TAG, "到: " + classname);
 
                 //进入微信主页面
-                if ("com.tencent.mm.ui.LauncherUI".equals(classname) && !收钱) {
+                if ("com.tencent.mm.ui.LauncherUI".equals(classname) && !我) {
                     Click("我");
+                    我=true;
                 }
 
-                //进入微信我的钱包页面
-                if ("com.tencent.mm.plugin.mall.ui.MallIndexUI".equals(classname) && !收钱) {
-                    Click("收付款");
+                //进入钱包主页面
+                if ("com.tencent.mm.ui.LauncherUI".equals(classname) && !钱包) {
+                    Click("钱包");
+                    钱包=true;
                 }
+
+                //进入微信收付款页面
+                if ("com.tencent.mm.plugin.mall.ui.MallIndexUI".equals(classname) && !收付款) {
+                    Click("收付款");
+                    收付款=true;
+                }
+
+                //进入微信二维码收款页面
+                if ("com.tencent.mm.plugin.offline.ui.WalletOfflineCoinPurseUI".equals(classname) && !二维码收款) {
+                    Click("二维码收款");
+                    二维码收款=true;
+                }
+
+                //点击"保存收款码"
+                if ("com.tencent.mm.plugin.collect.ui.CollectMainUI".equals(classname) && !保存收款码) {
+                    Click("保存收款码");
+                    保存收款码=true;
+                }
+
+
 
                 //进入支付宝主页面
                 if ("com.eg.android.AlipayGphone.AlipayLogin".equals(classname) && !收钱) {

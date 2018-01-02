@@ -9,4 +9,7 @@ package com.jiang.alipay_auxiliary;
  */
 
 public class Get_WeChat_QRcode {
+    public static void getQRcode(){
+
+    }
 }
