@@ -5,6 +5,7 @@ import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.util.Log;
 import android.view.View;
@@ -12,10 +13,12 @@ import android.view.accessibility.AccessibilityEvent;
 
 import com.jiang.alipay_auxiliary.utils.AccessibilityOperator;
 import com.jiang.alipay_auxiliary.utils.LogUtil;
+import com.jiang.alipay_auxiliary.utils.QRCodeUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.util.List;
+import java.util.Vector;
 
 /**
  * @author: jiangyao
@@ -27,6 +30,9 @@ import java.util.List;
 
 public class MyAccessibilityService extends AccessibilityService {
     private static final String TAG = "MyAccessibilityService";
+
+    //
+    String AliPay_QRCode_url = String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)) + "/Camera";
 
     public static String money, message;
 
@@ -169,35 +175,40 @@ public class MyAccessibilityService extends AccessibilityService {
                 //进入支付宝收钱页面
                 if ("com.alipay.mobile.payee.ui.PayeeQRActivity".equals(classname) && !获取二维码 && 金额输入) {
 
-                    //长按操作
-                    LongClick("支付宝扫一扫，向我付钱");
+                    //保存图片
+                    if (Click("保存图片")) {
 
-                    //保存操作
-                    Click("保存图片到相册");
+                        try {
+                            LogUtil.e(TAG, "稍等一下");
+                            Thread.sleep(200);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
 
+                        //获得图片路径
+                        String Img_File = GetVideoFileName();
 
-                    //读取、识别操作
+                        LogUtil.e(TAG, "图片路径：" + Img_File);
 
-                    //截屏操作
+                        //转换
+                        Drawable drawable = Drawable.createFromPath(Img_File);
 
-                    //使用Zxing 识别
+                        //识别
+                        String AliPay_QRcode = QRCodeUtils.getStringFromQRCode(drawable);
 
-                    //上送二维码
-//                    GetQRcode();
+                        LogUtil.e(TAG, "收款二维码:" + AliPay_QRcode);
+
+                        //删除文件
+                        if (new File(Img_File).delete()) {
+                            LogUtil.e(TAG, "删除成功");
+                        }
+
+                    }
 
                     获取二维码 = true;
                     LogUtil.e(TAG, "获取到二维码");
 
                 }
-
-
-//
-////                com.alipay.mobile.payee:id/payee_QRCodeImageView  二维码
-//
-//                //进入支付宝收钱页面
-//                if ("com.alipay.mobile.payee.ui.PayeeQRActivity".equals(classname)) {
-//                    Click("设置金额");
-//                }
 
 
                 break;
@@ -288,6 +299,44 @@ public class MyAccessibilityService extends AccessibilityService {
      * @param message
      */
     public void AliPayQRcode(String money, String message) {
+
+    }
+
+
+    /**
+     * 获取指定目录下所有jpg文件
+     *
+     * @return
+     */
+    public String GetVideoFileName() {
+        Vector<String> vecFile = new Vector<>();
+
+        File file = new File(AliPay_QRCode_url);
+        File[] subFile = file.listFiles();
+
+        try {
+            for (int iFileLength = 0; iFileLength < subFile.length; iFileLength++) {
+                // 判断是否为文件夹
+                if (!subFile[iFileLength].isDirectory()) {
+                    String filename = subFile[iFileLength].getName();
+                    // 判断是否为MP4结尾
+                    if (filename.trim().toLowerCase().endsWith(".jpg")) {
+                        vecFile.add(filename);
+                        LogUtil.e(TAG, filename);
+                    }
+                }
+            }
+        } catch (Exception e) {
+            LogUtil.e(TAG, e.getMessage());
+            return null;
+        }
+
+        if (vecFile.size() == 1) {
+            return AliPay_QRCode_url + "/" + vecFile.get(0).toString();
+        } else {
+            return null;
+        }
+
 
     }
 
