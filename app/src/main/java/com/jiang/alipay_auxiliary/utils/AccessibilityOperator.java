@@ -166,8 +166,8 @@ public class AccessibilityOperator {
                 //逐层判断
 
                 //传入层
-                if (node != null && node.isEnabled()) {
-                    LogUtil.e(TAG, "View类型：" + node.getClassName());
+                if (node.isEnabled()) {
+                    LogUtil.e(TAG, "准备点击：" + node.getClassName());
                     if (node.performAction(AccessibilityNodeInfo.ACTION_CLICK)) {
                         LogUtil.e(TAG, "点击： " + node.getClassName() + " 成功");
                         return true;
@@ -175,27 +175,27 @@ public class AccessibilityOperator {
                 }
 
                 //上一层
-                if (node.getParent() != null && node.getParent().isEnabled()) {
-                    LogUtil.e(TAG, "View类型：" + node.getParent().getClassName());
-                    if (node.performAction(AccessibilityNodeInfo.ACTION_CLICK)) {
+                if (node.getParent().isEnabled()) {
+                    LogUtil.e(TAG, "准备点击：" + node.getParent().getClassName());
+                    if (node.getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK)) {
                         LogUtil.e(TAG, "点击： " + node.getParent().getClassName() + " 成功");
                         return true;
                     }
                 }
 
                 //上上一层
-                if (node.getParent().getParent() != null && node.getParent().getParent().isEnabled()) {
-                    LogUtil.e(TAG, "View类型：" + node.getParent().getParent().getClassName());
-                    if (node.performAction(AccessibilityNodeInfo.ACTION_CLICK)) {
+                if (node.getParent().getParent().isEnabled()) {
+                    LogUtil.e(TAG, "准备点击：" + node.getParent().getParent().getClassName());
+                    if (node.getParent().getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK)) {
                         LogUtil.e(TAG, "点击： " + node.getParent().getParent().getClassName() + " 成功");
                         return true;
                     }
                 }
 
                 //表层
-                if (node.getParent().getParent().getParent() != null && node.getParent().getParent().getParent().isEnabled()) {
-                    LogUtil.e(TAG, "View类型：" + node.getParent().getParent().getParent().getClassName());
-                    if (node.performAction(AccessibilityNodeInfo.ACTION_CLICK)) {
+                if (node.getParent().getParent().getParent().isEnabled()) {
+                    LogUtil.e(TAG, "准备点击：" + node.getParent().getParent().getParent().getClassName());
+                    if (node.getParent().getParent().getParent().performAction(AccessibilityNodeInfo.ACTION_CLICK)) {
                         LogUtil.e(TAG, "点击： " + node.getParent().getParent().getParent().getClassName() + " 成功");
                         return true;
                     }
@@ -204,6 +204,7 @@ public class AccessibilityOperator {
 
             }
         }
+
         return false;
     }
 
@@ -220,7 +221,7 @@ public class AccessibilityOperator {
                 node = nodeInfos.get(i);
                 //传入层
                 if (node != null && node.isEnabled()) {
-                    LogUtil.e(TAG, "View类型：" + node.getClassName());
+                    LogUtil.e(TAG, "准备长按：" + node.getClassName());
                     if (node.performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK)) {
                         LogUtil.e(TAG, "长按： " + node.getClassName() + " 成功");
                         return true;
@@ -229,8 +230,8 @@ public class AccessibilityOperator {
 
                 //上一层
                 if (node.getParent() != null && node.getParent().isEnabled()) {
-                    LogUtil.e(TAG, "View类型：" + node.getParent().getClassName());
-                    if (node.performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK)) {
+                    LogUtil.e(TAG, "准备长按：" + node.getParent().getClassName());
+                    if (node.getParent().performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK)) {
                         LogUtil.e(TAG, "长按： " + node.getParent().getClassName() + " 成功");
                         return true;
                     }
@@ -238,8 +239,8 @@ public class AccessibilityOperator {
 
                 //上上一层
                 if (node.getParent().getParent() != null && node.getParent().getParent().isEnabled()) {
-                    LogUtil.e(TAG, "View类型：" + node.getParent().getParent().getClassName());
-                    if (node.performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK)) {
+                    LogUtil.e(TAG, "准备长按：" + node.getParent().getParent().getClassName());
+                    if (node.getParent().getParent().performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK)) {
                         LogUtil.e(TAG, "长按： " + node.getParent().getParent().getClassName() + " 成功");
                         return true;
                     }
@@ -247,8 +248,8 @@ public class AccessibilityOperator {
 
                 //表层
                 if (node.getParent().getParent().getParent() != null && node.getParent().getParent().getParent().isEnabled()) {
-                    LogUtil.e(TAG, "View类型：" + node.getParent().getParent().getParent().getClassName());
-                    if (node.performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK)) {
+                    LogUtil.e(TAG, "准备长按：" + node.getParent().getParent().getParent().getClassName());
+                    if (node.getParent().getParent().getParent().performAction(AccessibilityNodeInfo.ACTION_LONG_CLICK)) {
                         LogUtil.e(TAG, "长按： " + node.getParent().getParent().getParent().getClassName() + " 成功");
                         return true;
                     }
