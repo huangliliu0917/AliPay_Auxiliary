@@ -200,8 +200,6 @@ public class AccessibilityOperator {
                         return true;
                     }
                 }
-
-
             }
         }
 

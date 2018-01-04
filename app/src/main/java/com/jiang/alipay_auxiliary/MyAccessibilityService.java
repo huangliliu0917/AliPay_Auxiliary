@@ -4,16 +4,16 @@ import android.accessibilityservice.AccessibilityService;
 import android.app.ActivityManager;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.drawable.Drawable;
 import android.os.Environment;
 import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 
 import com.jiang.alipay_auxiliary.utils.AccessibilityOperator;
+import com.jiang.alipay_auxiliary.utils.CommandExecution;
 import com.jiang.alipay_auxiliary.utils.LogUtil;
-import com.jiang.alipay_auxiliary.utils.QRCodeUtils;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
 
@@ -27,6 +27,8 @@ import java.util.Vector;
 
 public class MyAccessibilityService extends AccessibilityService {
     private static final String TAG = "MyAccessibilityService";
+
+    AliPay_Entity aliPay_entity;
 
     //
     String AliPay_QRCode_url = String.valueOf(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DCIM)) + "/Camera";
@@ -76,23 +78,59 @@ public class MyAccessibilityService extends AccessibilityService {
         super.onServiceConnected();
         LogUtil.e(TAG, "服务已开启");
 
-        LogUtil.e(TAG, "金额：" + money);
-        LogUtil.e(TAG, "理由：" + message);
+//        CommandExecution.execCommand("input tap 100 100",true);
 
-//        //如果前台是支付宝
-//        if (getTopAppPackageName(MyApplication.context).equals("com.eg.android.AlipayGphone")) {
-//
-//        } else {
-//            startActivity(getPackageManager().getLaunchIntentForPackage("com.eg.android.AlipayGphone"));
-//        }
-
-
-        //如果前台是微信
-        if (getTopAppPackageName(MyApplication.context).equals("com.tencent.mm")) {
+        //如果前台是支付宝
+        if (getTopAppPackageName(MyApplication.context).equals("com.eg.android.AlipayGphone")) {
 
         } else {
-            startActivity(getPackageManager().getLaunchIntentForPackage("com.tencent.mm"));
+            startActivity(getPackageManager().getLaunchIntentForPackage("com.eg.android.AlipayGphone"));
         }
+//
+
+        aliPay_entity = new AliPay_Entity();
+
+        List list = new ArrayList();
+
+        AliPay_Entity.itemEntity itemEntity1 = new AliPay_Entity.itemEntity();
+        itemEntity1.setId(1);
+        itemEntity1.setMoney("1");
+        itemEntity1.setMessage("理由一");
+
+        AliPay_Entity.itemEntity itemEntity2 = new AliPay_Entity.itemEntity();
+        itemEntity2.setId(2);
+        itemEntity2.setMoney("2");
+        itemEntity2.setMessage("理由二");
+
+        AliPay_Entity.itemEntity itemEntity3 = new AliPay_Entity.itemEntity();
+        itemEntity3.setId(3);
+        itemEntity3.setMoney("3");
+        itemEntity3.setMessage("理由三");
+
+        AliPay_Entity.itemEntity itemEntity4 = new AliPay_Entity.itemEntity();
+        itemEntity4.setId(4);
+        itemEntity4.setMoney("4");
+        itemEntity4.setMessage("理由四");
+
+        AliPay_Entity.itemEntity itemEntity5 = new AliPay_Entity.itemEntity();
+        itemEntity5.setId(5);
+        itemEntity5.setMoney("5");
+        itemEntity5.setMessage("理由五");
+
+        list.add(itemEntity1);
+        list.add(itemEntity2);
+        list.add(itemEntity3);
+        list.add(itemEntity4);
+        list.add(itemEntity5);
+
+        aliPay_entity.setItemEntities(list);
+
+//        //如果前台是微信
+//        if (getTopAppPackageName(MyApplication.context).equals("com.tencent.mm")) {
+//
+//        } else {
+//            startActivity(getPackageManager().getLaunchIntentForPackage("com.tencent.mm"));
+//        }
 
     }
 
@@ -108,150 +146,166 @@ public class MyAccessibilityService extends AccessibilityService {
 
         AccessibilityOperator.getInstance().updateEvent(this, event);
 
-        String classname = event.getClassName().toString();
+        Get_AliPay_QRcode get_aliPay_qRcode = new Get_AliPay_QRcode(event, aliPay_entity);
 
-        switch (event.getEventType()) {
-            case AccessibilityEvent.TYPE_VIEW_CLICKED:
-                LogUtil.e(TAG, "点击了: " + classname);
-                break;
-            case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
-                LogUtil.e(TAG, "到: " + classname);
+        if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
 
-                //进入微信主页面
-                if ("com.tencent.mm.ui.LauncherUI".equals(classname) && !我) {
-                    Click("我");
-                    我 = true;
-                }
-
-                //进入钱包主页面
-                if ("com.tencent.mm.ui.LauncherUI".equals(classname) && !钱包) {
-                    Click("钱包");
-                    钱包 = true;
-                }
-
-                //进入微信收付款页面
-                if ("com.tencent.mm.plugin.mall.ui.MallIndexUI".equals(classname) && !收付款) {
-                    Click("收付款");
-                    收付款 = true;
-                }
-
-                //进入微信二维码收款页面
-                if ("com.tencent.mm.plugin.offline.ui.WalletOfflineCoinPurseUI".equals(classname) && !二维码收款) {
-                    Click("二维码收款");
-                    二维码收款 = true;
-                }
-
-                //进入微信二维码收款页面
-                if ("com.tencent.mm.plugin.collect.ui.CollectMainUI".equals(classname) && !设金额) {
-                    Click("设置金额");
-                    设金额 = true;
-                }
-
-                //进入微信二维码收款页面
-                if ("com.tencent.mm.plugin.collect.ui.CollectCreateQRCodeUI".equals(classname) && !二维码收款) {
-
-
-//                    Click("确定");
-                    二维码收款 = true;
-                }
-
-
-                //点击"保存收款码"
-                if ("com.tencent.mm.plugin.collect.ui.CollectMainUI".equals(classname) && !保存收款码) {
-                    Click("保存收款码");
-                    保存收款码 = true;
-                }
-
-
-                //进入支付宝主页面
-                if ("com.eg.android.AlipayGphone.AlipayLogin".equals(classname) && !收钱) {
-                    Click("收钱");
-                    收钱 = true;
-                }
-
-                //进入支付宝收钱页面
-                if ("com.alipay.mobile.payee.ui.PayeeQRActivity".equals(classname) && !设置金额) {
-                    Click("设置金额");
-                    设置金额 = true;
-                }
-
-                //进入支付宝设置金额页面
-                if ("com.alipay.mobile.payee.ui.PayeeQRSetMoneyActivity".equals(classname) && !添加收款理由) {
-                    Click("添加收款理由");
-                    添加收款理由 = true;
-                }
-
-                //进入支付宝设置金额页面
-                if ("com.alipay.mobile.payee.ui.PayeeQRSetMoneyActivity".equals(classname) && !金额输入) {
-                    LogUtil.e(TAG, "金额：" + money);
-                    Input("com.alipay.mobile.ui:id/content", "10");
-                    金额输入 = true;
-                }
-
-                //进入支付宝设置金额页面
-                if ("com.alipay.mobile.payee.ui.PayeeQRSetMoneyActivity".equals(classname) && !理由输入) {
-                    Input("com.alipay.mobile.ui:id/content", "没有理由");
-
-                    理由输入 = true;
-                }
-
-                //进入支付宝设置金额页面
-                if ("com.alipay.mobile.payee.ui.PayeeQRSetMoneyActivity".equals(classname) && !输入完成) {
-                    Click("确定");
-                    输入完成 = true;
-                }
-
-                //进入支付宝设置金额页面
-                if ("com.alipay.mobile.payee.ui.PayeeQRSetMoneyActivity".equals(classname) && !返回收款页面) {
-                    AccessibilityOperator.getInstance().clickBackKey();
-                    返回收款页面 = true;
-                }
-
-                //进入支付宝收钱页面
-                if ("com.alipay.mobile.payee.ui.PayeeQRActivity".equals(classname) && !获取二维码 && 金额输入) {
-
-                    //保存图片
-                    if (Click("保存图片")) {
-
-                        try {
-                            LogUtil.e(TAG, "稍等一下");
-                            Thread.sleep(200);
-                        } catch (InterruptedException e) {
-                            e.printStackTrace();
-                        }
-
-                        //获得图片路径
-                        String Img_File = GetVideoFileName();
-
-                        LogUtil.e(TAG, "图片路径：" + Img_File);
-
-                        //转换
-                        Drawable drawable = Drawable.createFromPath(Img_File);
-
-                        //识别
-                        String AliPay_QRcode = QRCodeUtils.getStringFromQRCode(drawable);
-
-                        LogUtil.e(TAG, "收款二维码:" + AliPay_QRcode);
-
-                        //删除文件
-                        if (new File(Img_File).delete()) {
-                            LogUtil.e(TAG, "删除成功");
-                        }
-
-                    }
-
-                    获取二维码 = true;
-                    LogUtil.e(TAG, "获取到二维码");
-
-                }
-
-
-                break;
-
-            default:
-                break;
-
+            if (aliPay_entity != null) {
+               get_aliPay_qRcode.start();
+            }
         }
+
+//        switch (event.getEventType()) {
+//            case AccessibilityEvent.TYPE_VIEW_CLICKED:
+//                LogUtil.e(TAG, "点击了: " + classname);
+//                break;
+//            case AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED:
+//                LogUtil.e(TAG, "到: " + classname);
+//
+//                //进入微信主页面
+//                if ("com.tencent.mm.ui.LauncherUI".equals(classname) && !我) {
+//                    Click("我");
+//                    我 = true;
+//                }
+//
+//                //进入钱包主页面
+//                if ("com.tencent.mm.ui.LauncherUI".equals(classname) && !钱包) {
+//                    Click("钱包");
+//                    钱包 = true;
+//                }
+//
+//                //进入微信收付款页面
+//                if ("com.tencent.mm.plugin.mall.ui.MallIndexUI".equals(classname) && !收付款) {
+//                    Click("收付款");
+//                    收付款 = true;
+//                }
+//
+//                //进入微信二维码收款页面
+//                if ("com.tencent.mm.plugin.offline.ui.WalletOfflineCoinPurseUI".equals(classname) && !二维码收款) {
+//
+//
+//                    Click("二维码收款");
+//                    二维码收款 = true;
+//                }
+//
+//                //进入微信二维码收款页面
+//                if ("com.tencent.mm.plugin.collect.ui.CollectMainUI".equals(classname) && !设金额) {
+//
+//                    Click("设置金额");
+//
+//
+////                    ClickById("com.tencent.mm:id/akw");
+////                    com.tencent.mm:id/akw   设置金额
+////                    com.tencent.mm:id/akx     保存二维码
+//                    设金额 = true;
+//                }
+//
+//                //进入微信二维码收款页面
+//                if ("com.tencent.mm.plugin.collect.ui.CollectCreateQRCodeUI".equals(classname) && !二维码收款) {
+//
+//
+////                    Click("确定");
+//                    二维码收款 = true;
+//                }
+//
+//
+//                //点击"保存收款码"
+//                if ("com.tencent.mm.plugin.collect.ui.CollectMainUI".equals(classname) && !保存收款码 && 设金额) {
+//                    Click("保存收款码");
+//                    ClickById("com.tencent.mm:id/akx");
+//                    保存收款码 = true;
+//                }
+//
+//
+//                //进入支付宝主页面
+//                if ("com.eg.android.AlipayGphone.AlipayLogin".equals(classname) && !收钱) {
+//                    Click("收钱");
+//                    收钱 = true;
+//                }
+//
+//                //进入支付宝收钱页面
+//                if ("com.alipay.mobile.payee.ui.PayeeQRActivity".equals(classname) && !设置金额) {
+//                    Click("设置金额");
+//                    设置金额 = true;
+//                }
+//
+//                //进入支付宝设置金额页面
+//                if ("com.alipay.mobile.payee.ui.PayeeQRSetMoneyActivity".equals(classname) && !添加收款理由) {
+//                    Click("添加收款理由");
+//                    添加收款理由 = true;
+//                }
+//
+//                //进入支付宝设置金额页面
+//                if ("com.alipay.mobile.payee.ui.PayeeQRSetMoneyActivity".equals(classname) && !金额输入) {
+//                    LogUtil.e(TAG, "金额：" + money);
+//                    Input("com.alipay.mobile.ui:id/content", "10");
+//                    金额输入 = true;
+//                }
+//
+//                //进入支付宝设置金额页面
+//                if ("com.alipay.mobile.payee.ui.PayeeQRSetMoneyActivity".equals(classname) && !理由输入) {
+//                    Input("com.alipay.mobile.ui:id/content", "没有理由");
+//
+//                    理由输入 = true;
+//                }
+//
+//                //进入支付宝设置金额页面
+//                if ("com.alipay.mobile.payee.ui.PayeeQRSetMoneyActivity".equals(classname) && !输入完成) {
+//                    Click("确定");
+//                    输入完成 = true;
+//                }
+//
+//                //进入支付宝设置金额页面
+//                if ("com.alipay.mobile.payee.ui.PayeeQRSetMoneyActivity".equals(classname) && !返回收款页面) {
+//                    AccessibilityOperator.getInstance().clickBackKey();
+//                    返回收款页面 = true;
+//                }
+//
+//                //进入支付宝收钱页面
+//                if ("com.alipay.mobile.payee.ui.PayeeQRActivity".equals(classname) && !获取二维码 && 金额输入) {
+//
+//                    //保存图片
+//                    if (Click("保存图片")) {
+//
+//                        try {
+//                            LogUtil.e(TAG, "稍等一下");
+//                            Thread.sleep(200);
+//                        } catch (InterruptedException e) {
+//                            e.printStackTrace();
+//                        }
+//
+//                        //获得图片路径
+//                        String Img_File = GetVideoFileName();
+//
+//                        LogUtil.e(TAG, "图片路径：" + Img_File);
+//
+//                        //转换
+//                        Drawable drawable = Drawable.createFromPath(Img_File);
+//
+//                        //识别
+//                        String AliPay_QRcode = QRCodeUtils.getStringFromQRCode(drawable);
+//
+//                        LogUtil.e(TAG, "收款二维码:" + AliPay_QRcode);
+//
+//                        //删除文件
+//                        if (new File(Img_File).delete()) {
+//                            LogUtil.e(TAG, "删除成功");
+//                        }
+//
+//                    }
+//
+//                    获取二维码 = true;
+//                    LogUtil.e(TAG, "获取到二维码");
+//
+//                }
+
+//
+//                break;
+//
+//            default:
+//                break;
+//
+//        }
     }
 
     /**
@@ -270,6 +324,21 @@ public class MyAccessibilityService extends AccessibilityService {
 
     }
 
+    /**
+     * 点击
+     *
+     * @param click
+     */
+    public boolean ClickById(String click) {
+
+        if (AccessibilityOperator.getInstance().clickById(click)) {
+            LogUtil.e(TAG, "点击" + click + "成功");
+            return true;
+        }
+        LogUtil.e(TAG, "点击 " + click + " 失败");
+        return false;
+
+    }
 
     /**
      * 长按
