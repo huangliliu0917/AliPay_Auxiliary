@@ -9,7 +9,6 @@ import android.util.Log;
 import android.view.accessibility.AccessibilityEvent;
 
 import com.jiang.alipay_auxiliary.utils.AccessibilityOperator;
-import com.jiang.alipay_auxiliary.utils.CommandExecution;
 import com.jiang.alipay_auxiliary.utils.LogUtil;
 
 import java.io.File;
@@ -151,9 +150,12 @@ public class MyAccessibilityService extends AccessibilityService {
         if (event.getEventType() == AccessibilityEvent.TYPE_WINDOW_STATE_CHANGED) {
 
             if (aliPay_entity != null) {
-               get_aliPay_qRcode.start();
+
+                AliPay_Entity entity = get_aliPay_qRcode.start();
+
             }
         }
+
 
 //        switch (event.getEventType()) {
 //            case AccessibilityEvent.TYPE_VIEW_CLICKED:

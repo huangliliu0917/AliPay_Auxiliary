@@ -9,23 +9,15 @@
     tools:context="com.jiang.alipay_auxiliary.MainActivity"
     tools:showIn="@layout/activity_main">
 
-    <EditText
-        android:id="@+id/money"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:hint="金额"
-        android:inputType="number"
-        android:maxLength="2"
-        tools:ignore="MissingConstraints" />
 
-    <EditText
-        android:id="@+id/message"
+    <Button
+        android:id="@+id/aliPay_btn"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:hint="理由"
-        app:layout_constraintTop_toBottomOf="@+id/money"
+        android:text="AliPay"
         tools:ignore="MissingConstraints"
-        tools:layout_editor_absoluteX="16dp" />
+        tools:layout_editor_absoluteX="0dp"
+        tools:layout_editor_absoluteY="3dp" />
+
 
 </android.support.constraint.ConstraintLayout>

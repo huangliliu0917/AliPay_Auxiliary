@@ -33,7 +33,7 @@ public class Get_AliPay_QRcode {
 
     AliPay_Entity entity;
 
-    int i = 0;
+    private static int i = 0;
 
     public Get_AliPay_QRcode(AccessibilityEvent event, AliPay_Entity entity) {
         this.event = event;
@@ -44,10 +44,21 @@ public class Get_AliPay_QRcode {
 
         String classname = event.getClassName().toString();
 
+        LogUtil.e(TAG, "到：" + classname);
+        LogUtil.e(TAG, "收钱：" + 收钱);
+        LogUtil.e(TAG, "设置金额：" + 设置金额);
+        LogUtil.e(TAG, "添加收款理由：" + 添加收款理由);
+        LogUtil.e(TAG, "金额输入：" + 金额输入);
+        LogUtil.e(TAG, "理由输入：" + 理由输入);
+        LogUtil.e(TAG, "输入完成：" + 输入完成);
+        LogUtil.e(TAG, "返回收款页面：" + 返回收款页面);
+        LogUtil.e(TAG, "获取二维码：" + 获取二维码);
+
         //进入支付宝主页面
         if ("com.eg.android.AlipayGphone.AlipayLogin".equals(classname) && !收钱) {
             Auxiliary_Util.ClickByText("收钱");
             收钱 = true;
+            设置金额 = false;
         }
 
         //进入支付宝收钱页面
@@ -134,10 +145,9 @@ public class Get_AliPay_QRcode {
                 返回收款页面 = false;
                 获取二维码 = false;
 
-                if (i < entity.getItemEntities().size()) {
-
+                if (i < entity.getItemEntities().size()-1) {
+                    i++;
                     start();
-
                 } else {
                     return entity;
                 }

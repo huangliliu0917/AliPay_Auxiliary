@@ -11,15 +11,17 @@ import android.text.TextUtils;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 
 import com.jiang.alipay_auxiliary.utils.AccessibilityOperator;
 import com.jiang.alipay_auxiliary.utils.LogUtil;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "MainActivity";
 
-    EditText money, message;
+
+    Button AliPay;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,56 +35,10 @@ public class MainActivity extends AppCompatActivity {
 
         AccessibilityOperator.getInstance().init(this);
 
-        FloatingActionButton fab = findViewById(R.id.fab);
+        AliPay = findViewById(R.id.aliPay_btn);
 
-        money = findViewById(R.id.money);
-        message = findViewById(R.id.message);
 
-        fab.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View view) {
-
-//                if (TextUtils.isEmpty(money.getText().toString())) {
-//                    Snackbar.make(view, "金额不能为空！", Snackbar.LENGTH_SHORT).show();
-//                    return;
-//                }
-//
-//                if (TextUtils.isEmpty(message.getText().toString())) {
-//                    Snackbar.make(view, "不能没有理由！", Snackbar.LENGTH_SHORT).show();
-//                    return;
-//                }
-
-                MyAccessibilityService.money = money.getText().toString();
-                MyAccessibilityService.message = message.getText().toString();
-
-                final String messag;
-                boolean isopen;
-                if (isAccessibilitySettingsOn()) {
-                    isopen = true;
-                    messag = getString(R.string.app_name) + "服务已开启";
-                } else {
-                    isopen = false;
-                    messag = getString(R.string.app_name) + "服务未开启";
-                }
-
-                Snackbar.make(view, messag, Snackbar.LENGTH_LONG)
-                        .setAction(isopen ? "好" : "去开启", isopen ? new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-
-                                OpenAliPay();
-                            }
-                        } : new View.OnClickListener() {
-                            @Override
-                            public void onClick(View v) {
-                                startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
-
-                                LogUtil.e(TAG, "金额:" + MyAccessibilityService.money);
-                                LogUtil.e(TAG, "理由:" + MyAccessibilityService.message);
-                            }
-                        }).show();
-            }
-        });
+        AliPay.setOnClickListener(this);
     }
 
     @Override
@@ -158,4 +114,16 @@ public class MainActivity extends AppCompatActivity {
         return false;
     }
 
+    @Override
+    public void onClick(View v) {
+        switch (v.getId()){
+            case R.id.aliPay_btn:
+                if (isAccessibilitySettingsOn()){
+                    OpenAliPay();
+                }else {
+                    startActivity(new Intent(Settings.ACTION_ACCESSIBILITY_SETTINGS));
+                }
+                break;
+        }
+    }
 }

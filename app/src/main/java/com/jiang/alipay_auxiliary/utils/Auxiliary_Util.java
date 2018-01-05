@@ -113,7 +113,6 @@ public class Auxiliary_Util {
                 // 判断是否为文件夹
                 if (!subFile[iFileLength].isDirectory()) {
                     String filename = subFile[iFileLength].getName();
-                    LogUtil.e(TAG, "图片列表：" + filename);
                     // 判断是否为JPG结尾
                     if (filename.trim().toLowerCase().endsWith(".jpg")) {
                         if (filename.length() == 17 && match("(^\\d{13}$)", filename.substring(0, 13))) {

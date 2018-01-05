@@ -71,7 +71,12 @@ public class AccessibilityOperator {
     public List<AccessibilityNodeInfo> findNodesByText(String text) {
         AccessibilityNodeInfo nodeInfo = getRootNodeInfo();
         if (nodeInfo != null) {
-            return nodeInfo.findAccessibilityNodeInfosByText(text);
+            List<AccessibilityNodeInfo> infoList = nodeInfo.findAccessibilityNodeInfosByText(text);
+            if ("收钱".equals(text) && infoList.size() == 2) {
+                infoList.remove(0);
+            }
+
+            return infoList;
         }
         return null;
     }
